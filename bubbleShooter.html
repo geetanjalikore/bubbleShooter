@@ -1,0 +1,48 @@
+<html>
+
+<head>
+  <title>Document</title>
+  <link rel="stylesheet" href="style.css">
+  <script>
+    const colors = ['red', 'black', 'green', 'blue'];
+    const getColor = () => {
+      const index = Math.floor(Math.random() * colors.length);
+      return colors[index];
+    }
+
+    const createBall = (x, y) => {
+      const ball = document.createElement('div');
+      ball.setAttribute('class', 'ball');
+      ball.style.left = x;
+      ball.style.right = y;
+      ball.style.backgroundColor = getColor();
+      return ball;
+    }
+
+    const generateBalls = () => {
+      const balls = Array(5).fill(0);
+      let x = 10;
+      let y = 10;
+
+      const board = document.getElementById('board');
+      return balls.map(() => {
+        x += 60;
+        const ball = createBall(x, y);
+        board.appendChild(ball);
+        const ballPos = { x, y, id: `${x}_${y}` };
+        return ballPos;
+      })
+    }
+
+    window.onload = () => {
+      generateBalls();
+    }
+  </script>
+</head>
+
+<body>
+  <div id="board" class="board">
+  </div>
+</body>
+
+</html>

@@ -1,0 +1,25 @@
+.red {
+  background-color: red;
+}
+
+.aquamarine {
+  background-color: aquamarine;
+}
+
+.ball {
+  width: 50px;
+  height: 50px;
+  border: 1px solid black;
+  border-radius: 50%;
+  position: absolute;
+}
+
+.board {
+  display: flex;
+  justify-content: center;
+}
+
+.shooter {
+  position: absolute;
+  background-color: crimson;
+}
