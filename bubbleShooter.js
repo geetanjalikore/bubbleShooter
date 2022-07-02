@@ -1,41 +1,7 @@
-class Shooter {
-  #id;
-  #position;
-  #speed;
-  constructor(id, position, speed) {
-    this.#id = id;
-    this.#position = position;
-    this.#speed = speed;
-  }
-
-  move() {
-    this.#position.x -= this.#speed.dx;
-    this.#position.y -= this.#speed.dy;
-  }
-
-  getInfo() {
-    const { x, y } = this.#position;
-    return {
-      id: this.#id,
-      position: { x, y },
-      speed: this.#speed,
-    }
-  }
-}
-
 const colors = ['red', 'black', 'green', 'blue'];
 const getColor = () => {
   const index = Math.floor(Math.random() * colors.length);
   return colors[index];
-};
-
-const drawBall = (x, y) => {
-  const ball = document.createElement('div');
-  ball.setAttribute('class', 'ball');
-  ball.style.left = x;
-  ball.style.top = y;
-  ball.style.backgroundColor = getColor();
-  return ball;
 };
 
 const drawShooter = (shooter, game) => {
@@ -54,20 +20,34 @@ const updateShooter = (shooter) => {
   shooterElement.style.top = position.y;
 };
 
+const drawBall = (ball, board) => {
+  const { x, y, id } = ball;
+  const ballElement = document.createElement('div');
+  ballElement.id = id;
+  ballElement.setAttribute('class', 'ball');
+  ballElement.style.left = x;
+  ballElement.style.top = y;
+  ballElement.style.backgroundColor = getColor();
+  board.appendChild(ballElement);
+};
+
 const generateBalls = () => {
   const balls = [];
+  const ballsCount = 10;
   let x = 10;
   let y = 10;
   const offset = 60;
 
   const board = document.getElementById('board');
 
-  for (let index = 0; index < 5; index++) {
+  for (let index = 0; index < ballsCount; index++) {
     x += offset;
     balls.push({ x, y, id: `${x}_${y}` });
-    const ball = drawBall(x, y);
-    board.appendChild(ball);
   }
+
+  balls.forEach(ball => {
+    drawBall(ball, board);
+  });
 
   const shooter = new Shooter('shooter', { x: 220, y: 900 }, { dx: 1, dy: 5 });
   const game = document.getElementById('game');
