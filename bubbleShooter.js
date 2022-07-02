@@ -1,10 +1,35 @@
+class Shooter {
+  #id;
+  #position;
+  #speed;
+  constructor(id, position, speed) {
+    this.#id = id;
+    this.#position = position;
+    this.#speed = speed;
+  }
+
+  move() {
+    this.#position.x -= this.#speed.dx;
+    this.#position.y -= this.#speed.dy;
+  }
+
+  getInfo() {
+    const { x, y } = this.#position;
+    return {
+      id: this.#id,
+      position: { x, y },
+      speed: this.#speed,
+    }
+  }
+}
+
 const colors = ['red', 'black', 'green', 'blue'];
 const getColor = () => {
   const index = Math.floor(Math.random() * colors.length);
   return colors[index];
-}
+};
 
-const createBall = (x, y) => {
+const drawBall = (x, y) => {
   const ball = document.createElement('div');
   ball.setAttribute('class', 'ball');
   ball.style.left = x;
@@ -13,32 +38,45 @@ const createBall = (x, y) => {
   return ball;
 };
 
-const createShooter = () => {
-  const x = 220;
-  const y = 900;
-  const shooter = { x, y, id: 'shooter' };
-  const ball = createBall(x, y);
-  ball.setAttribute('id', shooter.id);
-  const game = document.getElementById('game');
-  game.appendChild(ball);
-  return shooter;
+const drawShooter = (shooter, game) => {
+  const { id, position } = shooter.getInfo();
+  const shooterElement = document.createElement('div');
+  shooterElement.id = id;
+  shooterElement.style.left = position.x;
+  shooterElement.style.top = position.y;
+  game.appendChild(shooterElement);
+};
+
+const updateShooter = (shooter) => {
+  const { id, position } = shooter.getInfo();
+  const shooterElement = document.getElementById(id);
+  shooterElement.style.left = position.x;
+  shooterElement.style.top = position.y;
 };
 
 const generateBalls = () => {
-  const balls = Array(5).fill(0);
+  const balls = [];
   let x = 10;
   let y = 10;
   const offset = 60;
 
   const board = document.getElementById('board');
-  balls.map(() => {
+
+  for (let index = 0; index < 5; index++) {
     x += offset;
-    const ball = createBall(x, y);
+    balls.push({ x, y, id: `${x}_${y}` });
+    const ball = drawBall(x, y);
     board.appendChild(ball);
-    const ballPos = { x, y, id: `${x}_${y}` };
-    return ballPos;
-  });
-  const shooter = createShooter();
+  }
+
+  const shooter = new Shooter('shooter', { x: 220, y: 900 }, { dx: 1, dy: 5 });
+  const game = document.getElementById('game');
+
+  drawShooter(shooter, game);
+  setInterval(() => {
+    shooter.move();
+    updateShooter(shooter);
+  }, 50);
 };
 
 window.onload = generateBalls;

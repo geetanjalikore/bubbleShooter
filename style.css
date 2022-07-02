@@ -19,7 +19,11 @@
   justify-content: center;
 }
 
-.shooter {
+#shooter {
+  height: 50px;
+  width: 50px;
   position: absolute;
   background-color: crimson;
+  border: 1px solid black;
+  border-radius: 50%;
 }
