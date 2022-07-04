@@ -1,5 +1,6 @@
 # TODO
 
+- [ ] Rename game to view.
 - [ ] Add onclick event.
 - [ ] Draw new shooter after colliding.
 

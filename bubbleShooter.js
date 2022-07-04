@@ -62,7 +62,7 @@ const blastBullet = (bullet, game) => {
   game.removeChild(bulletElement);
 };
 
-const shoot = (bullet, balls, ballsElement, game) => {
+const shoot = (bullet, balls, ballsElement, viewElement) => {
   const id = setInterval(() => {
     bullet.move();
     updateBullet(bullet);
@@ -71,27 +71,50 @@ const shoot = (bullet, balls, ballsElement, game) => {
     if (collidedBall) {
       clearInterval(id);
       blastBall(collidedBall, ballsElement);
-      blastBullet(bullet, game);
+      blastBullet(bullet, viewElement);
+      balls = balls.filter(({ id }) => collidedBall.id !== id);
+      redrawBullet(balls, ballsElement, viewElement);
     }
 
   }, 50);
 };
 
+const redrawBullet = (balls, ballsElement, viewElement) => {
+  const bullet = createBullet();
+  drawBullet(bullet, viewElement);
+
+  const bulletElement = document.getElementById(bullet.getInfo().id);
+  bulletElement.onclick = () => shoot(bullet, balls, ballsElement, viewElement);
+};
+
+const randomNumber = (min, max) => {
+  const difference = max - min;
+  let random = Math.floor(Math.random() * difference);
+  random = min + random;
+  return random;
+};
+
+const createBullet = (config) => {
+  const color = randomColor();
+  const speed = { dx: 1, dy: 20 };
+  return new Bullet('bullet', { x: 250, y: 500 }, speed, color, 50);
+};
+
 const setupGame = () => {
-  const balls = generateBalls();
+  const viewElement = document.getElementById('view');
   const ballsElement = document.getElementById('balls');
+
+  const balls = generateBalls();
 
   balls.forEach(ball => {
     drawBall(ball, ballsElement);
   });
 
-  const gameElement = document.getElementById('game');
-
-  const bullet = new Bullet('bullet', { x: 250, y: 500 }, { dx: -1, dy: 20 }, 50);
-  drawBullet(bullet, gameElement);
+  const bullet = createBullet();
+  drawBullet(bullet, viewElement);
 
   const bulletElement = document.getElementById(bullet.getInfo().id);
-  bulletElement.onclick = () => shoot(bullet, balls, ballsElement, gameElement);
+  bulletElement.onclick = () => shoot(bullet, balls, ballsElement, viewElement);
 };
 
 window.onload = setupGame;
