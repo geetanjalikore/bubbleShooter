@@ -17,7 +17,7 @@ class Bullet {
   #position;
   #speed;
   #color;
-  #size
+  #size;
   constructor(id, position, speed, color, size) {
     this.#id = id;
     this.#position = position;
@@ -38,7 +38,7 @@ class Bullet {
       const bullet = this.getInfo();
       const bulletCenter = calculateCenter(bullet);
       const distance = caluclateDistance(bulletCenter, ballCenter);
-      if (distance <= size) return true;
+      if (distance <= size && ball.color === this.#color) return true
     })
   };
 
