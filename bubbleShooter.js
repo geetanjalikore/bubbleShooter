@@ -96,11 +96,13 @@ const randomNumber = (min, max) => {
 
 const createBullet = (config) => {
   const color = randomColor();
-  const speed = { dx: 1, dy: 20 };
+  const speed = { dx: randomNumber(-10, 5), dy: 20 };
+  console.log(speed.dx);
   return new Bullet('bullet', { x: 250, y: 500 }, speed, color, 50);
 };
 
 const setupGame = () => {
+  const view = { x: 20, y: 10 };
   const viewElement = document.getElementById('view');
   const ballsElement = document.getElementById('balls');
 

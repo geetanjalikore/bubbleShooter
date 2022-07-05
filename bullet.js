@@ -1,4 +1,4 @@
-const calculateCenter = (position, size) => {
+const calculateCenter = ({ position, size }) => {
   const { x, y } = position;
   const center = {};
   center.x = x + (size / 2);
@@ -31,18 +31,12 @@ class Bullet {
     this.#position.y -= this.#speed.dy;
   };
 
-  #calculateCenter() {
-    const { x, y } = this.#position;
-    const center = {};
-    center.x = x + (this.#size / 2);
-    center.y = y + (this.#size / 2);
-    return center;
-  };
-
   getCollidedBall(balls) {
-    return balls.find(({ position, size }) => {
-      const ballCenter = calculateCenter(position, size);
-      const bulletCenter = this.#calculateCenter();
+    return balls.find(ball => {
+      const ballCenter = calculateCenter(ball);
+      const { size } = ball
+      const bullet = this.getInfo();
+      const bulletCenter = calculateCenter(bullet);
       const distance = caluclateDistance(bulletCenter, ballCenter);
       if (distance <= size) return true;
     })
