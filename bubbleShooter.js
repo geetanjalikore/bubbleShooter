@@ -14,8 +14,7 @@ const drawBullet = (bullet, game) => {
   game.appendChild(bulletElement);
 };
 
-const updateBullet = (Bullet) => {
-  const { id, position } = Bullet.getInfo();
+const updateBullet = ({ id, position }) => {
   const bulletElement = document.getElementById(id);
   bulletElement.style.left = position.x;
   bulletElement.style.top = position.y;
@@ -51,41 +50,34 @@ const generateBalls = () => {
   return balls;
 };
 
-const blastBall = (ball, ballsElement) => {
-  const ballElement = document.getElementById(ball.id);
-  ballsElement.removeChild(ballElement);
+const redrawGame = (game) => {
+  const viewElement = document.getElementById('view');
+  const bulletElement = document.getElementById('bullet');
+  const ballsElement = document.getElementById('balls');
+
+  ballsElement.innerHTML = '';
+  viewElement.removeChild(bulletElement);
+  drawGame(game);
 };
 
-const blastBullet = (bullet, game) => {
-  const id = bullet.getInfo().id;
-  const bulletElement = document.getElementById(id);
-  game.removeChild(bulletElement);
-};
-
-const shoot = (bullet, balls, ballsElement, viewElement) => {
+const shootController = (game) => {
   const id = setInterval(() => {
-    bullet.move();
-    updateBullet(bullet);
-    const collidedBall = bullet.getCollidedBall(balls);
+    const bulletPos = game.shoot();
+    updateBullet(bulletPos);
 
-    if (!collidedBall) {
-      return;
+    const collidedBall = game.getCollidedBall();
+    let { bullet } = game.getInfo();
+
+    if (collidedBall) {
+      clearInterval(id);
+      game.remove(collidedBall);
+      bullet = createBullet();
     }
-    clearInterval(id);
-    blastBall(collidedBall, ballsElement);
-    blastBullet(bullet, viewElement);
-    balls = balls.filter(({ id }) => collidedBall.id !== id);
-    redrawBullet(balls, ballsElement, viewElement);
 
+    const { balls, view } = game.getInfo();
+    const newGame = new Game(balls, bullet, view);
+    redrawGame(newGame);
   }, 50);
-};
-
-const redrawBullet = (balls, ballsElement, viewElement) => {
-  const bullet = createBullet();
-  drawBullet(bullet, viewElement);
-
-  const bulletElement = document.getElementById(bullet.getInfo().id);
-  bulletElement.onclick = () => shoot(bullet, balls, ballsElement, viewElement);
 };
 
 const randomNumber = (min, max) => {
@@ -101,25 +93,30 @@ const createBullet = (config) => {
   return new Bullet('bullet', { x: 300, y: 500 }, speed, color, 50);
 };
 
-const setupGame = () => {
-  const position = { x: 600, y: 100 };
-  const dimensions = { height: 700, width: 700 };
-  const view = { position, dimensions };
+const drawGame = (game) => {
+  const { bullet, balls } = game.getInfo();
   const viewElement = document.getElementById('view');
   const ballsElement = document.getElementById('balls');
-
-  const balls = generateBalls();
 
   balls.forEach(ball => {
     drawBall(ball, ballsElement);
   });
 
-  const bullet = createBullet();
   drawBullet(bullet, viewElement);
-  console.log(bullet.getInfo().color, 'bulletttt');
-
   const bulletElement = document.getElementById(bullet.getInfo().id);
-  bulletElement.onclick = () => shoot(bullet, balls, ballsElement, viewElement);
+  bulletElement.onclick = () => shootController(game);
+};
+
+const setupGame = () => {
+  const position = { x: 600, y: 100 };
+  const dimensions = { height: 700, width: 700 };
+  const view = { position, dimensions };
+
+  const balls = generateBalls();
+
+  const bullet = createBullet();
+  const game = new Game(balls, bullet, view);
+  drawGame(game);
 };
 
 window.onload = setupGame;
